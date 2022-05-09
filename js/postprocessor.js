@@ -101,11 +101,11 @@ Postprocessor = {
                             else {
                                 audioSequence.data[i] *= lerp(sustainLevel, 0.0, (i - (endPoint - releaseDuration) + 1) / releaseDuration);
                             }
-                        }
-
-                        if (i % 20 == 0 ) {
+                            
+                            if (i % 20 == 0 ) {
                             audioGraphSequence[ii] = audioSequence.data[i];
                             ii = ii + 1;
+                            }
                         }
 
                     }
