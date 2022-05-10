@@ -71,6 +71,8 @@ Postprocessor = {
                 var endPoint = parseFloat($("#adsr-end-point").data("p" + pass)) * sampleRate;
                 var expo = $("#adsr-exponetial").prop("checked");
                 var log = $("#adsr-logarimatic").prop("checked");
+                var atk_expo = parseFloat($("#adsr-attack-slider").val());
+                var decay_release_expo = parseFloat($("#adsr-decay-release-slider").val());
 
                 var labelSequence = [];
                 var audioGraphSequence = [];
@@ -87,19 +89,40 @@ Postprocessor = {
                         // for performing linear interpolation
                         if (i >= startPoint && i < endPoint) {
                             if (i < startPoint + attackDuration) {
-                                audioSequence.data[i] *= lerp(0.0, 1.0, (i + 1) / attackDuration);
+                                var attackPercent = (i + 1) / attackDuration;
+                                if (expo) {
+                                    audioSequence.data[i] *= lerpExpo(0.0, 1.0, attackPercent, atk_expo);
+                                } else if (log) {
+
+                                } else {
+                                    audioSequence.data[i] *= lerp(0.0, 1.0, attackPercent);
+                                }
                             }
                             else if (i < startPoint + attackDuration + holdDuration) {
                                 audioSequence.data[i] *= 1;
                             }
                             else if (i < startPoint + attackDuration + holdDuration + decayDuration) {
-                                audioSequence.data[i] *= lerp(1.0, sustainLevel, (i - startPoint - attackDuration - holdDuration + 1) / decayDuration);
+                                var decayPercent = (i - startPoint - attackDuration - holdDuration + 1) / decayDuration;
+                                if (expo) {
+                                    audioSequence.data[i] *= lerpExpo(1.0, sustainLevel, decayPercent, decay_release_expo);
+                                } else if (log) {
+
+                                } else {
+                                    audioSequence.data[i] *= lerp(1.0, sustainLevel, decayPercent);
+                                }
                             }
                             else if (i < endPoint - releaseDuration) {
                                 audioSequence.data[i] *= sustainLevel;
                             }
                             else {
-                                audioSequence.data[i] *= lerp(sustainLevel, 0.0, (i - (endPoint - releaseDuration) + 1) / releaseDuration);
+                                var releasePercent = (i - (endPoint - releaseDuration) + 1) / releaseDuration;
+                                if (expo) {
+                                    audioSequence.data[i] *= lerpExpo(sustainLevel, 0.0, releasePercent, decay_release_expo);
+                                } else if (log) {
+
+                                } else {
+                                    audioSequence.data[i] *= lerp(sustainLevel, 0.0, releasePercent);
+                                }
                             }
                             
                             if (i % 20 == 0 ) {
