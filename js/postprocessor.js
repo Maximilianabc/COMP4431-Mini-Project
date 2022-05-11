@@ -83,7 +83,7 @@ Postprocessor = {
                     var audioSequence = channels[c].audioSequenceReference;
 
                     // change the value of xx according to the number of sample to increase process speed
-                    xx = (audioSequence.data.length / (sampleRate)) * 10;
+                    xx = ((endPoint - startPoint) / (sampleRate)) * 10;
 
                     for (var i = 0; i < audioSequence.data.length; ++i) {
                         // TODO: Complete the ADSR postprocessor
