@@ -601,17 +601,10 @@
                             </div>
                             <div class="row">
                                 <div class="col-3">
-                                    <label for="adsr-exponetial">Exponential change</label>
+                                    <label for="adsr-exponetial">Exponential/Logarimatic</label>
                                     <div class="input-group">
                                         <input class="form-control toggle-control" id="adsr-exponetial" type="checkbox"
-                                            data-toggle-target="adsr-logarimatic,adsr-attack-slider,adsr-decay-release-slider" />
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <label for="adsr-logarimatic">Logarithmatic change</label>
-                                    <div class="input-group">
-                                        <input class="form-control toggle-control" id="adsr-logarimatic" type="checkbox"
-                                            data-toggle-target="adsr-exponetial,adsr-attack-slider,adsr-decay-release-slider" />
+                                            data-toggle-target="adsr-attack-slider,adsr-decay-release-slider" />
                                     </div>
                                 </div>
                                 <div class="col-3">
@@ -634,11 +627,9 @@
                                 </div>
                             </div>
 
-
                             <div class="container" id="AHDSRGraph">
                                 <canvas id="myChart"></canvas>
                             </div>
-
 
                         </div>
                     </div>

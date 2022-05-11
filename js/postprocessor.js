@@ -70,18 +70,20 @@ Postprocessor = {
                 var startPoint = parseFloat($("#adsr-start-point").data("p" + pass)) * sampleRate;
                 var endPoint = parseFloat($("#adsr-end-point").data("p" + pass)) * sampleRate;
                 var expo = $("#adsr-exponetial").prop("checked");
-                var log = $("#adsr-logarimatic").prop("checked");
                 var atk_expo = parseFloat($("#adsr-attack-slider").val());
                 var decay_release_expo = parseFloat($("#adsr-decay-release-slider").val());
 
                 var labelSequence = [];
                 var audioGraphSequence = [];
-                var ii = 1;
-                audioGraphSequence[0] = 0;
+                var ii = 0;
+                var xx = 20;
 
                 for (var c = 0; c < channels.length; ++c) {
                     // Get the sample data of the channel
                     var audioSequence = channels[c].audioSequenceReference;
+
+                    // change the value of xx according to the number of sample to increase process speed
+                    xx = (audioSequence.data.length / (sampleRate)) * 10;
 
                     for (var i = 0; i < audioSequence.data.length; ++i) {
                         // TODO: Complete the ADSR postprocessor
@@ -92,9 +94,7 @@ Postprocessor = {
                                 var attackPercent = (i + 1) / attackDuration;
                                 if (expo) {
                                     audioSequence.data[i] *= lerpExpo(0.0, 1.0, attackPercent, atk_expo);
-                                } else if (log) {
-
-                                } else {
+                                }else {
                                     audioSequence.data[i] *= lerp(0.0, 1.0, attackPercent);
                                 }
                             }
@@ -105,9 +105,7 @@ Postprocessor = {
                                 var decayPercent = (i - startPoint - attackDuration - holdDuration + 1) / decayDuration;
                                 if (expo) {
                                     audioSequence.data[i] *= lerpExpo(1.0, sustainLevel, decayPercent, decay_release_expo);
-                                } else if (log) {
-
-                                } else {
+                                }else {
                                     audioSequence.data[i] *= lerp(1.0, sustainLevel, decayPercent);
                                 }
                             }
@@ -118,14 +116,12 @@ Postprocessor = {
                                 var releasePercent = (i - (endPoint - releaseDuration) + 1) / releaseDuration;
                                 if (expo) {
                                     audioSequence.data[i] *= lerpExpo(sustainLevel, 0.0, releasePercent, decay_release_expo);
-                                } else if (log) {
-
-                                } else {
+                                }else {
                                     audioSequence.data[i] *= lerp(sustainLevel, 0.0, releasePercent);
                                 }
                             }
                             
-                            if (i % 20 == 0 ) {
+                            if ( i % xx == 0 ) {
                             audioGraphSequence[ii] = audioSequence.data[i];
                             ii = ii + 1;
                             }
@@ -137,14 +133,7 @@ Postprocessor = {
                         labelSequence[b] = '';
                     }
 
-                    
-
                     if (expo) {
-                        var attackChange = $("#adsr-attack-slider").val();
-                        var decayReleaseChange = $("#adsr-decay-release-slider").val();
-
-                    }
-                    else if (log) {
                         var attackChange = $("#adsr-attack-slider").val();
                         var decayReleaseChange = $("#adsr-decay-release-slider").val();
                     }
@@ -156,15 +145,6 @@ Postprocessor = {
                     var imported = document.createElement('script');
                     imported.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js';
                     document.head.appendChild(imported);
-
-
-                    // if log change, then convert amplitude to dB
-                    if (log) {
-                        for (var c = 0; c < audioGraphSequence.length; c++) {
-                            audioGraphSequence[c] = 20 * Math.log10(audioGraphSequence[c]);
-                        }
-                    }
-
 
                     $("canvas#myChart").remove();
                     $("div#AHDSRGraph").append('<canvas id="myChart"></canvas>');
@@ -192,10 +172,7 @@ Postprocessor = {
                             layout: {padding: 50}
                         }
                     });
-
-                    
                     // End of draw non-editable chart
-
                 }
                 break;
 
