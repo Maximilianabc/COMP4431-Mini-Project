@@ -158,6 +158,14 @@ Postprocessor = {
                     document.head.appendChild(imported);
 
 
+                    // if log change, then convert amplitude to dB
+                    if (log) {
+                        for (var c = 0; c < audioGraphSequence.length; c++) {
+                            audioGraphSequence[c] = 20 * Math.log10(audioGraphSequence[c]);
+                        }
+                    }
+
+
                     $("canvas#myChart").remove();
                     $("div#AHDSRGraph").append('<canvas id="myChart"></canvas>');
 
